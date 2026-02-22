@@ -1311,6 +1311,63 @@ inline void setWindowTitle(const std::string& title) {
 }
 
 // ---------------------------------------------------------------------------
+// Cursor
+// ---------------------------------------------------------------------------
+
+enum class Cursor {
+    Default     = SAPP_MOUSECURSOR_DEFAULT,
+    Arrow       = SAPP_MOUSECURSOR_ARROW,
+    IBeam       = SAPP_MOUSECURSOR_IBEAM,
+    Crosshair   = SAPP_MOUSECURSOR_CROSSHAIR,
+    Hand        = SAPP_MOUSECURSOR_POINTING_HAND,
+    ResizeEW    = SAPP_MOUSECURSOR_RESIZE_EW,
+    ResizeNS    = SAPP_MOUSECURSOR_RESIZE_NS,
+    ResizeNWSE  = SAPP_MOUSECURSOR_RESIZE_NWSE,
+    ResizeNESW  = SAPP_MOUSECURSOR_RESIZE_NESW,
+    ResizeAll   = SAPP_MOUSECURSOR_RESIZE_ALL,
+    NotAllowed  = SAPP_MOUSECURSOR_NOT_ALLOWED,
+    // Custom cursor slots (must call bindCursorImage first)
+    Rotate      = SAPP_MOUSECURSOR_CUSTOM_0,
+    Custom1     = SAPP_MOUSECURSOR_CUSTOM_1,
+    Custom2     = SAPP_MOUSECURSOR_CUSTOM_2,
+};
+
+// Show the mouse cursor (default)
+inline void showCursor() {
+    sapp_show_mouse(true);
+}
+
+// Hide the mouse cursor
+inline void hideCursor() {
+    sapp_show_mouse(false);
+}
+
+// Set mouse cursor shape (uses OS system cursors or custom cursors)
+inline void setCursor(Cursor cursor) {
+    sapp_set_mouse_cursor((sapp_mouse_cursor)cursor);
+}
+
+// Get current mouse cursor shape
+inline Cursor getCursor() {
+    return (Cursor)sapp_get_mouse_cursor();
+}
+
+// Bind a custom RGBA image to a cursor slot
+// pixels: RGBA 8-bit data (width * height * 4 bytes)
+inline void bindCursorImage(Cursor cursor, int width, int height,
+                            const unsigned char* pixels,
+                            int hotspotX = 0, int hotspotY = 0) {
+    sapp_image_desc desc = {};
+    desc.width = width;
+    desc.height = height;
+    desc.pixels.ptr = pixels;
+    desc.pixels.size = (size_t)(width * height * 4);
+    desc.cursor_hotspot_x = hotspotX;
+    desc.cursor_hotspot_y = hotspotY;
+    sapp_bind_mouse_cursor_image((sapp_mouse_cursor)cursor, &desc);
+}
+
+// ---------------------------------------------------------------------------
 // Clipboard
 // ---------------------------------------------------------------------------
 

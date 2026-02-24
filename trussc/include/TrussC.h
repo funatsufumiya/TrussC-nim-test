@@ -17,11 +17,11 @@
 #include "sokol/sokol_app.h"
 #include "sokol/sokol_gfx.h"
 #include "sokol/sokol_glue.h"
-#include "sokol/sokol_gl_tc.h"
+#include "sokol/util/sokol_gl_tc.h"
 
 // Dear ImGui + sokol_imgui
 #include "imgui/imgui.h"
-#include "sokol/sokol_imgui.h"
+#include "sokol/util/sokol_imgui.h"
 
 // Standard libraries
 #include <cstdint>

@@ -6,7 +6,7 @@
 // =============================================================================
 
 #include "imgui/imgui.h"
-#include "sokol/sokol_imgui.h"
+#include "sokol/util/sokol_imgui.h"
 #include "tc/utils/tcLog.h"
 
 namespace trussc {

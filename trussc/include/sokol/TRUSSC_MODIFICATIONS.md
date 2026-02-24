@@ -5,24 +5,44 @@ When updating from upstream, these changes need to be re-applied.
 
 Search for `tettou771` or `Modified by` or `[TrussC` to find all modified sections.
 
+**Upstream base:** https://github.com/floooh/sokol commit `4838409` (2026-02-23)
+
+---
+
+## Directory Structure
+
+```
+sokol/
+├── sokol_app.h          # Modified (3 patches)
+├── sokol_gfx.h          # Untouched (direct copy from upstream)
+├── sokol_glue.h         # Modified (1 patch)
+├── sokol_log.h          # Untouched
+├── sokol_time.h         # Untouched
+├── sokol_fetch.h        # Untouched
+├── sokol_audio.h        # Untouched
+├── sokol_debugtext.h    # Untouched
+├── TRUSSC_MODIFICATIONS.md
+└── util/
+    ├── sokol_gl_tc.h    # Forked from upstream util/sokol_gl.h + TrussC modifications
+    └── sokol_imgui.h    # Untouched (direct copy from upstream util/)
+```
+
+Matches upstream directory layout: core headers at root, utility headers in `util/`.
+
 ---
 
 ## sokol_app.h
 
 ### 1. Skip Present (D3D11 flickering fix)
 
-**Lines:** ~2216, ~3322, ~8286, ~13719
-
 **Purpose:** Add `sapp_skip_present()` function to skip the next present call, fixing D3D11 flickering in event-driven rendering.
 
 **Changes:**
-- Added `skip_present` flag to `_sapp_state_t` struct
+- Added `skip_present` flag to `_sapp_t` struct
 - Added `sapp_skip_present()` function declaration and implementation
 - Modified D3D11 present logic to check the flag
 
 ### 2. Keyboard Events on Canvas (Emscripten)
-
-**Lines:** ~7495-7500, ~7530-7533
 
 **Purpose:** Register keyboard events on canvas element instead of window, allowing other page elements (like Monaco editor in TrussSketch) to handle keyboard events independently.
 
@@ -32,14 +52,13 @@ Search for `tettou771` or `Modified by` or `[TrussC` to find all modified sectio
 
 ### 3. 10-bit Color Output (Metal / D3D11)
 
-**Lines:** ~1846, ~4972, ~6089, ~8125, ~8253, ~8282, ~13522
-
 **Purpose:** Use RGB10A2 (10-bit per channel, 2-bit alpha) instead of BGRA8 for the default framebuffer on Metal and D3D11. Reduces color banding on 10-bit displays. Same 32-bit bandwidth as BGRA8, no performance impact. WebGL unchanged.
 
 **Changes:**
 - Added `SAPP_PIXELFORMAT_RGB10A2` to `sapp_pixel_format` enum
-- macOS/iOS Metal: `MTLPixelFormatBGRA8Unorm` → `MTLPixelFormatBGR10A2Unorm`
-- D3D11: `DXGI_FORMAT_B8G8R8A8_UNORM` → `DXGI_FORMAT_R10G10B10A2_UNORM` (swap chain, MSAA, resize)
+- macOS Metal: `CAMetalLayer.pixelFormat` = `MTLPixelFormatRGB10A2Unorm` (layer + MSAA texture)
+- iOS Metal: same (CAMetalLayer + MSAA texture)
+- D3D11: `DXGI_FORMAT_R10G10B10A2_UNORM` (swap chain, MSAA, resize)
 - `sapp_color_format()` returns `SAPP_PIXELFORMAT_RGB10A2` for Metal/D3D11
 
 ---
@@ -48,15 +67,13 @@ Search for `tettou771` or `Modified by` or `[TrussC` to find all modified sectio
 
 ### 4. RGB10A2 Format Mapping
 
-**Lines:** ~149
-
 **Purpose:** Map the new `SAPP_PIXELFORMAT_RGB10A2` to `SG_PIXELFORMAT_RGB10A2` in the bridge between sokol_app and sokol_gfx.
 
 ---
 
-## sokol_gl_tc.h (forked from sokol_gl.h)
+## util/sokol_gl_tc.h (forked from upstream util/sokol_gl.h)
 
-**Renamed from `sokol_gl.h` to `sokol_gl_tc.h`** to clearly separate from upstream. No other sokol header depends on sokol_gl, so this is a safe rename.
+**Forked from upstream `sokol_gl.h`** and renamed to `sokol_gl_tc.h` to clearly separate from upstream. No other sokol header depends on sokol_gl, so this is a safe rename.
 
 TrussC-specific public functions use the `sgl_tc_` prefix to distinguish from upstream `sgl_` API.
 
@@ -110,8 +127,10 @@ These functions do NOT exist in upstream sokol_gl. They are TrussC additions.
 2. **sokol_gfx.h** — overwrite directly (no modifications)
 3. **sokol_app.h** — overwrite, then re-apply patches #1–#3 (search `tettou771`)
 4. **sokol_glue.h** — overwrite, then re-apply patch #4
-5. **sokol_gl_tc.h** — do NOT overwrite. Diff upstream sokol_gl.h for bug fixes and cherry-pick manually
-6. Test on all platforms (macOS, Windows D3D11, Emscripten Web)
+5. **util/sokol_imgui.h** — overwrite directly from upstream `util/sokol_imgui.h`
+6. **util/sokol_gl_tc.h** — copy upstream `util/sokol_gl.h`, rename, then re-apply patches #5–#7 (search `[TrussC`)
+7. **Other headers** (sokol_log.h, sokol_time.h, etc.) — overwrite directly
+8. Test on all platforms (macOS, Windows D3D11, Emscripten Web)
 
 ## Author
 

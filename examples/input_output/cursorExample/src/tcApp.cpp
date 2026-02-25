@@ -17,7 +17,9 @@ void tcApp::setup() {
         { Cursor::ResizeAll,  "ResizeAll" },
         { Cursor::NotAllowed, "NotAllowed" },
         { Cursor::Custom0,    "Custom0 (Image file)" },
+#ifndef __EMSCRIPTEN__
         { Cursor::Custom1,    "Custom1 (Fbo)" },
+#endif
     };
 
     // --- Custom0: load image file ---
@@ -25,7 +27,9 @@ void tcApp::setup() {
     bindCursorImage(Cursor::Custom0, cursorImage,
                     cursorImage.getWidth() / 2, cursorImage.getHeight() / 2);
 
+#ifndef __EMSCRIPTEN__
     // --- Custom1: draw into Fbo, then convert to Image ---
+    // (Fbo readPixels is not yet supported on WebGPU)
     int sz = 32;
     fbo.allocate(sz, sz);
     fbo.begin();
@@ -44,6 +48,7 @@ void tcApp::setup() {
     fbo.end();
     fbo.copyTo(fboImage);
     bindCursorImage(Cursor::Custom1, fboImage, sz / 2, sz / 2);
+#endif
 }
 
 void tcApp::draw() {
@@ -92,6 +97,8 @@ void tcApp::draw() {
     cursorImage.draw(startX, previewY, 48, 48);
     drawBitmapString("Image file", startX, previewY + 52);
 
+#ifndef __EMSCRIPTEN__
     fboImage.draw(startX + 100, previewY, 48, 48);
     drawBitmapString("Fbo->Image", startX + 100, previewY + 52);
+#endif
 }

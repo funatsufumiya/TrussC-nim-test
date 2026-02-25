@@ -277,6 +277,8 @@ Reference for oF users finding equivalent features in TrussC.
 | `ofGetMouseY` | `getMouseY()` |  |
 | `ofGetMousePressed` | `isMousePressed()` |  |
 | `ofGetKeyPressed` | `isKeyPressed(key)` |  |
+| `ofShowCursor` | `showCursor()` |  |
+| `ofHideCursor` | `hideCursor()` |  |
 
 ### **Graphics**
 

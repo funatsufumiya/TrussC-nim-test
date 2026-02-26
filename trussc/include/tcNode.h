@@ -518,6 +518,7 @@ private:
 
         // User drawing
         if (isVisible_) {
+            resetStyle();
             draw();
         }
 
@@ -525,6 +526,7 @@ private:
         drawChildren();
 
         // End draw hook
+        resetStyle();
         endDraw();
 
         popMatrix();

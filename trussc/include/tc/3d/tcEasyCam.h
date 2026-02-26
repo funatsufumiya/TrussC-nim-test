@@ -157,6 +157,18 @@ public:
         panSensitivity_ = s;
     }
 
+    // Constrain mouse input to a specific screen area.
+    // Only mouse events inside this rect will be processed.
+    // Pass an empty rect (width or height <= 0) to clear the constraint.
+    void setControlArea(const Rect& area) {
+        controlArea_ = area;
+        hasControlArea_ = (area.width > 0 && area.height > 0);
+    }
+
+    void clearControlArea() {
+        hasControlArea_ = false;
+    }
+
     // ---------------------------------------------------------------------------
     // Mouse input (auto-subscribe to events)
     // ---------------------------------------------------------------------------
@@ -166,6 +178,10 @@ public:
         mouseInputEnabled_ = true;
 
         // Subscribe to mouse events
+        listenerMoved_ = events().mouseMoved.listen([this](MouseMoveEventArgs& e) {
+            lastMouseX_ = e.x;
+            lastMouseY_ = e.y;
+        });
         listenerPressed_ = events().mousePressed.listen([this](MouseEventArgs& e) {
             onMousePressed(e.x, e.y, e.button);
         });
@@ -185,6 +201,7 @@ public:
         mouseInputEnabled_ = false;
 
         // Disconnect listeners
+        listenerMoved_.disconnect();
         listenerPressed_.disconnect();
         listenerReleased_.disconnect();
         listenerDragged_.disconnect();
@@ -205,8 +222,16 @@ public:
     void mouseScrolled(float dx, float dy) { onMouseScrolled(dx, dy); }
 
 private:
+    bool isInsideControlArea(float x, float y) const {
+        if (!hasControlArea_) return true;
+        return x >= controlArea_.x && x <= controlArea_.x + controlArea_.width
+            && y >= controlArea_.y && y <= controlArea_.y + controlArea_.height;
+    }
+
     // Internal mouse handlers
     void onMousePressed(float x, float y, int button) {
+        if (!isInsideControlArea(x, y)) return;
+
         lastMouseX_ = x;
         lastMouseY_ = y;
 
@@ -263,6 +288,11 @@ private:
 
     void onMouseScrolled(float dx, float dy) {
         (void)dx;
+        // Check control area using current mouse position
+        float mx = lastMouseX_;
+        float my = lastMouseY_;
+        if (!isInsideControlArea(mx, my)) return;
+
         // Zoom (change distance)
         distance_ -= dy * zoomSensitivity_;
         if (distance_ < 0.1f) distance_ = 0.1f;
@@ -308,7 +338,11 @@ private:
     float zoomSensitivity_;   // Zoom sensitivity
     float panSensitivity_;    // Pan sensitivity
 
+    Rect controlArea_;        // Constraint area for mouse input
+    bool hasControlArea_ = false;
+
     // Event listeners (RAII - auto disconnect on destruction)
+    EventListener listenerMoved_;
     EventListener listenerPressed_;
     EventListener listenerReleased_;
     EventListener listenerDragged_;

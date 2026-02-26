@@ -304,7 +304,7 @@ public:
         if (!label.empty()) {
             setColor(1.0f, 1.0f, 1.0f);
             drawBitmapString(label, getWidth() / 2, getHeight() / 2,
-                             Direction::Center, Direction::Baseline);
+                             Direction::Center, Direction::Center);
         }
     }
 

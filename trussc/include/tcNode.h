@@ -327,6 +327,11 @@ public:
         localY = local.y;
     }
 
+    // Get global position (origin of this node in global space)
+    Vec3 getGlobalPos() const {
+        return localToGlobal(Vec3(0, 0, 0));
+    }
+
     // Convert local coordinates to global coordinates
     Vec3 localToGlobal(const Vec3& local) const {
         return getGlobalMatrix() * local;

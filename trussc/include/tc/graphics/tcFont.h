@@ -873,7 +873,14 @@ protected:
             const AtlasState& atlas = atlasManager_->getAtlas(atlasIdx);
             if (!atlas.isTextureValid()) continue;
 
-            sgl_load_pipeline(pipeline_);
+            // Use FBO blend pipeline when inside FBO pass (font pipeline has
+            // dst_factor_alpha=ZERO which destroys the background alpha, causing
+            // color fringing when the FBO texture is composited to screen)
+            if (internal::inFboPass && internal::currentFboBlendPipeline.id != 0) {
+                sgl_load_pipeline(internal::currentFboBlendPipeline);
+            } else {
+                sgl_load_pipeline(pipeline_);
+            }
             sgl_enable_texture();
             sgl_texture(atlas.getView(), sampler_);
 

@@ -2916,6 +2916,36 @@ categories:
         description_ja: "色の成分を設定（型メソッド）"
         snippet: "set(${1:r}, ${2:g}, ${3:b})"
 
+      - name: toHSB
+        return: "ColorHSB"
+        signatures:
+          - params: ""
+            params_simple: ""
+        description: "Convert to HSB color space (H: 0-1, S: 0-1, B: 0-1)"
+        description_ja: "HSB色空間に変換 (H: 0-1, S: 0-1, B: 0-1)"
+        sketch: true
+        snippet: "toHSB()"
+
+      - name: toOKLab
+        return: "ColorOKLab"
+        signatures:
+          - params: ""
+            params_simple: ""
+        description: "Convert to OKLab color space (perceptually uniform)"
+        description_ja: "OKLab色空間に変換（知覚的に均一）"
+        sketch: true
+        snippet: "toOKLab()"
+
+      - name: toOKLCH
+        return: "ColorOKLCH"
+        signatures:
+          - params: ""
+            params_simple: ""
+        description: "Convert to OKLCH color space (L: 0-1, C: 0-0.4, H: 0-1)"
+        description_ja: "OKLCH色空間に変換 (L: 0-1, C: 0-0.4, H: 0-1)"
+        sketch: true
+        snippet: "toOKLCH()"
+
       - name: Color_fromHSB
         return: "Color"
         signatures:
@@ -2923,8 +2953,8 @@ categories:
             params_simple: "h, s, b"
           - params: "float h, float s, float b, float a"
             params_simple: "h, s, b, a"
-        description: "Create Color from HSB"
-        description_ja: "HSBからColorを作成"
+        description: "Create Color from HSB (H: 0-1, S: 0-1, B: 0-1)"
+        description_ja: "HSBからColorを作成 (H: 0-1, S: 0-1, B: 0-1)"
         sketch: true
         snippet: "Color_fromHSB(${1:h}, ${2:s}, ${3:b})"
 
@@ -2963,6 +2993,84 @@ categories:
         description_ja: "OKLabからColorを作成"
         sketch: true
         snippet: "Color_fromOKLab(${1:L}, ${2:a}, ${3:b})"
+
+  # ==========================================================================
+  # Types - ColorHSB
+  # ==========================================================================
+  - id: types_colorhsb
+    name: "Types - ColorHSB"
+    name_ja: "型 - ColorHSB"
+    functions:
+      - name: ColorHSB
+        return: ""
+        signatures:
+          - params: "float h, float s, float b"
+            params_simple: "h, s, b"
+          - params: "float h, float s, float b, float a"
+            params_simple: "h, s, b, a"
+        description: "HSB color type (H: 0-1, S: 0-1, B: 0-1). Use toRGB() to convert to Color"
+        description_ja: "HSBカラー型 (H: 0-1, S: 0-1, B: 0-1)。toRGB()でColorに変換"
+        sketch: true
+        snippet: "ColorHSB(${1:h}, ${2:s}, ${3:b})"
+
+      - name: toRGB
+        return: "Color"
+        signatures:
+          - params: ""
+            params_simple: ""
+        description: "Convert ColorHSB to Color (RGB)"
+        description_ja: "ColorHSBをColor (RGB) に変換"
+        sketch: true
+        snippet: "toRGB()"
+
+      - name: lerp
+        return: "ColorHSB"
+        signatures:
+          - params: "ColorHSB target, float t"
+            params_simple: "target, t"
+        description: "Interpolate in HSB space (shortest hue path)"
+        description_ja: "HSB空間で補間（色相は最短経路）"
+        sketch: true
+        snippet: "lerp(${1:target}, ${2:t})"
+
+  # ==========================================================================
+  # Types - ColorOKLCH
+  # ==========================================================================
+  - id: types_coloroklch
+    name: "Types - ColorOKLCH"
+    name_ja: "型 - ColorOKLCH"
+    functions:
+      - name: ColorOKLCH
+        return: ""
+        signatures:
+          - params: "float L, float C, float H"
+            params_simple: "L, C, H"
+          - params: "float L, float C, float H, float a"
+            params_simple: "L, C, H, a"
+        description: "OKLCH color type (L: 0-1, C: 0-0.4, H: 0-1). Perceptually uniform"
+        description_ja: "OKLCHカラー型 (L: 0-1, C: 0-0.4, H: 0-1)。知覚的に均一"
+        sketch: true
+        snippet: "ColorOKLCH(${1:L}, ${2:C}, ${3:H})"
+
+      - name: toRGB
+        return: "Color"
+        signatures:
+          - params: ""
+            params_simple: ""
+        description: "Convert ColorOKLCH to Color (RGB)"
+        description_ja: "ColorOKLCHをColor (RGB) に変換"
+        sketch: true
+        snippet: "toRGB()"
+
+      - name: lerp
+        return: "ColorOKLCH"
+        signatures:
+          - params: "ColorOKLCH target, float t"
+            params_simple: "target, t"
+        description: "Interpolate in OKLCH space (shortest hue path, perceptually uniform)"
+        description_ja: "OKLCH空間で補間（色相は最短経路、知覚的に均一）"
+        sketch: true
+        snippet: "lerp(${1:target}, ${2:t})"
 
   # ==========================================================================
   # Types - Rect
@@ -5388,6 +5496,20 @@ types:
         description: "Get clamped copy (0.0-1.0)"
         description_ja: "クランプしたコピーを取得"
         snippet: "clamped()"
+      - name: toHSB
+        return: ColorHSB
+        signatures:
+          - params: ""
+        description: "Convert to HSB (H: 0-1, S: 0-1, B: 0-1)"
+        description_ja: "HSBに変換 (H: 0-1, S: 0-1, B: 0-1)"
+        snippet: "toHSB()"
+      - name: toOKLCH
+        return: ColorOKLCH
+        signatures:
+          - params: ""
+        description: "Convert to OKLCH (L: 0-1, C: 0-0.4, H: 0-1)"
+        description_ja: "OKLCHに変換 (L: 0-1, C: 0-0.4, H: 0-1)"
+        snippet: "toOKLCH()"
     static_methods:
       - name: Color_fromHex
         return: Color

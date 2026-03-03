@@ -238,7 +238,9 @@ public:
     void rotate(const Quaternion& quat) {
         Mat4 rotMat = quat.toMatrix();
         currentMatrix_ = currentMatrix_ * rotMat;
-        sgl_mult_matrix(rotMat.m);
+        // Mat4 is row-major, sokol_gl expects column-major — transpose
+        Mat4 t = rotMat.transposed();
+        sgl_mult_matrix(t.m);
     }
 
     void scale(float s) {

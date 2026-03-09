@@ -115,6 +115,9 @@ public:
     // Set request timeout in seconds (default: 30)
     void setTimeout(long seconds) { timeoutSeconds_ = seconds; }
 
+    // Enable verbose curl logging to stderr (for debugging)
+    void setVerbose(bool v) { verbose_ = v; }
+
     // Check if server is reachable
     bool isReachable() {
         auto res = get("/api/health");
@@ -149,6 +152,7 @@ private:
     std::string baseUrl_;
     std::vector<std::pair<std::string, std::string>> headers_;
     long timeoutSeconds_ = 30;
+    bool verbose_ = false;
 
     HttpResponse request(const std::string& method, const std::string& path,
                          const std::string& body,
@@ -188,6 +192,9 @@ inline HttpResponse HttpClient::request(const std::string& method, const std::st
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &responseBody);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, timeoutSeconds_);
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+    if (verbose_) {
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    }
 
     // Set method
     if (method == "POST") {

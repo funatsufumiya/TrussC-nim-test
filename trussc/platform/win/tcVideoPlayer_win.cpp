@@ -232,7 +232,23 @@ bool TCVideoPlayerImpl::createD3D11Device() {
     );
 
     if (FAILED(hr)) {
-        logError("VideoPlayer") << "Failed to create D3D11 device";
+        logWarning("VideoPlayer") << "Hardware D3D11 failed, trying WARP software fallback";
+        hr = D3D11CreateDevice(
+            nullptr,
+            D3D_DRIVER_TYPE_WARP,
+            nullptr,
+            flags,
+            featureLevels,
+            ARRAYSIZE(featureLevels),
+            D3D11_SDK_VERSION,
+            &d3dDevice_,
+            &featureLevel,
+            &d3dContext_
+        );
+    }
+
+    if (FAILED(hr)) {
+        logError("VideoPlayer") << "Failed to create D3D11 device (hardware and WARP both failed)";
         return false;
     }
 

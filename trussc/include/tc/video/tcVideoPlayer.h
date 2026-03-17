@@ -55,8 +55,11 @@ public:
             close();
         }
 
+        // Resolve relative paths via getDataPath
+        std::string resolvedPath = getDataPath(path);
+
         // Platform-specific load
-        if (!loadPlatform(path)) {
+        if (!loadPlatform(resolvedPath)) {
             return false;
         }
 

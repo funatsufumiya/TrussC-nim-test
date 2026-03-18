@@ -22,6 +22,16 @@
 # =============================================================================
 
 macro(trussc_app)
+    # Ensure TrussC's cmake modules are on the module search path
+    if(DEFINED TRUSSC_DIR)
+        list(APPEND CMAKE_MODULE_PATH "${TRUSSC_DIR}/cmake")
+    endif()
+
+    # Include optional helper that provides `trussc_print_nim_detection()`
+    if(DEFINED TRUSSC_DIR AND EXISTS "${TRUSSC_DIR}/cmake/CheckNim.cmake")
+        include("${TRUSSC_DIR}/cmake/CheckNim.cmake")
+    endif()
+    
     # Set default build type to RelWithDebInfo
     if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
         set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Build type" FORCE)

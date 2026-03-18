@@ -221,7 +221,7 @@ void tcApp::draw() {
     // Main window (fixed to full window size)
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(getWindowWidth(), getWindowHeight()));
-    ImGui::Begin("TrussC Project Generator", nullptr,
+    ImGui::Begin("TrussC-nim Project Generator", nullptr,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
@@ -523,7 +523,7 @@ void tcApp::draw() {
         showSetupDialog = true;
     }
     ImGui::SameLine();
-    ImGui::TextDisabled("TrussC: %s", tcRoot.c_str());
+    ImGui::TextDisabled("TrussC-nim: %s", tcRoot.c_str());
 
     ImGui::End();
 
